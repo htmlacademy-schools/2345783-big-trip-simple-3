@@ -11,7 +11,7 @@ function createOffersTemplate(offers) {
       <span class="event__offer-price">${getOfferPrice(offer)}</span>
     </li>
   `).join('');
-  }
+}
 
 function createPointTemplate(eventPoint) {
   const {basePrice, dateFrom, dateTo, destination, offers, type} = eventPoint;
