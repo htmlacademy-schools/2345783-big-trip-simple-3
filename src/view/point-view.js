@@ -4,15 +4,15 @@ import { getCityNameById } from '../mock/destination';
 import { getOfferName, getOfferPrice } from '../mock/data';
 
 function createOffersTemplate(offers) {
-    return offers.map((offer) => `
-      <li class="event__offer">
-        <span class="event__offer-title">${getOfferName(offer)}</span>
-        &plus;&euro;&nbsp;
-        <span class="event__offer-price">${getOfferPrice(offer)}</span>
-      </li>
-    `).join('');
+  return offers.map((offer) => `
+    <li class="event__offer">
+      <span class="event__offer-title">${getOfferName(offer)}</span>
+      &plus;&euro;&nbsp;
+      <span class="event__offer-price">${getOfferPrice(offer)}</span>
+    </li>
+  `).join('');
   }
-  
+
 function createPointTemplate(eventPoint) {
   const {basePrice, dateFrom, dateTo, destination, offers, type} = eventPoint;
   const eventDateTime = convertToEventDateTime(dateFrom);
