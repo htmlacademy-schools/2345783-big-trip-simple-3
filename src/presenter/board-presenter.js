@@ -1,25 +1,26 @@
-import CreationForm from '../view/creation-form';
-import EditingForm from '../view/editing-form';
-import Sorting from '../view/sorting';
-import Point from '../view/point';
-import PointList from '../view/point-list';
+import CreationFormView from '../view/creation-form-view';
+import EditingFormView from '../view/editing-form-view';
+import SortingView from '../view/sorting-view';
+import PointView from '../view/point-view';
+import PointListView from '../view/point-list-view';
 import {render} from '../render';
 
 export default class BoardPresenter {
-  pointListComponent = new PointList();
+  pointListComponent = new PointListView();
 
-  constructor ({boardContainer}) {
+  constructor ({boardContainer, pointsModel}) {
     this.boardContainer = boardContainer;
+    this.pointsModel = pointsModel;
   }
 
   init() {
-    render(new Sorting(), this.boardContainer);
+    this.points = [...this.pointsModel.getPoints()];
+    render(new SortingView(), this.boardContainer);
     render(this.pointListComponent, this.boardContainer);
-    render(new CreationForm(), this.pointListComponent.getElement());
-    render(new Point(), this.pointListComponent.getElement());
-    render(new EditingForm(), this.pointListComponent.getElement());
-    for (let i = 0; i < 3; i++) {
-      render(new Point(), this.pointListComponent.getElement());
+    render(new CreationFormView(), this.pointListComponent.getElement());
+    render(new EditingFormView(), this.pointListComponent.getElement());
+    for (let i = 0; i < this.points.length; i++) {
+      render(new PointView({point: this.points[i]}));
     }
   }
 }
