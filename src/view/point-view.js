@@ -1,10 +1,9 @@
 import {createElement} from '../render';
-import { convertToEventDateTime, convertToEventDate, convertToDateTime, convertToTime,convertToUpperCase } from '../util';
+import { convertToEventDateTime, convertToEventDate, convertToDateTime, convertToTime } from '../util';
 import { getCityNameById } from '../mock/destination';
 import { getOfferName, getOfferPrice } from '../mock/data';
 
-function createPointTemplate() {
-  function createOffersTemplate(offers) {
+function createOffersTemplate(offers) {
     return offers.map((offer) => `
       <li class="event__offer">
         <span class="event__offer-title">${getOfferName(offer)}</span>
@@ -13,17 +12,16 @@ function createPointTemplate() {
       </li>
     `).join('');
   }
-}
   
-  function createEventItemTemplate(eventPoint) {
-    const {basePrice, dateFrom, dateTo, destination, offers, type} = eventPoint;
-    const eventDateTime = convertToEventDateTime(dateFrom);
-    const eventDate = convertToEventDate(dateFrom);
-    const fromDateTime = convertToDateTime(dateFrom);
-    const fromTime = convertToTime(dateFrom);
-    const toDateTime = convertToDateTime(dateTo);
-    const toTime = convertToTime(dateTo);
-    const offersTemplate = createOffersTemplate(offers);
+function createPointTemplate(eventPoint) {
+  const {basePrice, dateFrom, dateTo, destination, offers, type} = eventPoint;
+  const eventDateTime = convertToEventDateTime(dateFrom);
+  const eventDate = convertToEventDate(dateFrom);
+  const fromDateTime = convertToDateTime(dateFrom);
+  const fromTime = convertToTime(dateFrom);
+  const toDateTime = convertToDateTime(dateTo);
+  const toTime = convertToTime(dateTo);
+  const offersTemplate = createOffersTemplate(offers);
 
   return(
     `<li class="trip-events__item">
@@ -56,9 +54,9 @@ function createPointTemplate() {
 }
 
 export default class Point {
-constructor({point}) {
-  this.point = point;
-}
+  constructor({point}) {
+    this.point = point;
+  }
 
   getTemplate() {
     return createPointTemplate(this.point);

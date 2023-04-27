@@ -1,7 +1,7 @@
 import {createElement} from '../render';
 import { getCityDescriptionById, getCityPictureById, getCityNameById } from '../mock/destination';
 import { getRandomPoint } from '../mock/point';
-import { convertToFormDate, convertToUpperCase } from '../util';
+import { convertToFormDate } from '../util';
 import { getOfferName, getOfferPrice } from '../mock/data';
 
 function createOffersTemplate(offers) {
@@ -87,7 +87,7 @@ function createCreationFormTemplate(){
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-            ${convertToUpperCase(type)}
+            ${type}
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${getCityNameById(destination)}" list="destination-list-1">
             <datalist id="destination-list-1">
