@@ -1,12 +1,13 @@
-import {render} from './render.js';
-import Filters from './view/filters.js';
-import BoardPresenter from './presenter/board-presenter.js';
+import {render} from './render';
+import Filters from './view/filters-view';
+import BoardPresenter from './presenter/board-presenter';
+import PointModel from './model/point-model';
 
 const filterConteiner = document.querySelector('.trip-controls__filters');
 render(new Filters,filterConteiner);
 
 const pageContainer = document.querySelector('.trip-events');
-const boardPresenter = new BoardPresenter({boardContainer: pageContainer});
-
+const pointsModel = new PointModel();
+const boardPresenter = new BoardPresenter({boardContainer: pageContainer, pointsModel});
 
 boardPresenter.init();
