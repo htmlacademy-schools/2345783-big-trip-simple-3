@@ -2,7 +2,8 @@ import EditingFormView from '../view/editing-form-view';
 import SortingView from '../view/sorting-view';
 import Point from '../view/point-view';
 import PointListView from '../view/point-list-view';
-import {render} from '../render';
+import NoPointsView from '../view/no-points-view';
+import { render } from '../render';
 import { isEscapeKey } from '../util';
 
 export default class BoardPresenter {
@@ -18,10 +19,15 @@ export default class BoardPresenter {
 
   init() {
     this.#points = [...this.#pointsModel.points];
-    render(new SortingView(), this.#boardContainer);
-    render(this.#pointListComponent, this.#boardContainer);
-    for (let i = 0; i < this.#points.length; i++) {
-      this.#renderPoint(this.#points[i]);
+    if(this.#points.length === 0) {
+      render(new NoPointsView(), this.#boardContainer);
+    }
+    else {
+      render(new SortingView(), this.#boardContainer);
+      render(this.#pointListComponent, this.#boardContainer);
+      for (let i = 0; i < this.#points.length; i++) {
+        this.#renderPoint(this.#points[i]);
+      }
     }
   }
 
