@@ -13,8 +13,8 @@ function createOffersTemplate(offers) {
   `).join('');
 }
 
-function createPointTemplate(eventPoint) {
-  const {basePrice, dateFrom, dateTo, destination, offers, type} = eventPoint;
+function createPointTemplate(point) {
+  const {basePrice, dateFrom, dateTo, destination, offers, type} = point;
   const eventDateTime = convertToEventDateTime(dateFrom);
   const eventDate = convertToEventDate(dateFrom);
   const fromDateTime = convertToDateTime(dateFrom);
@@ -54,22 +54,25 @@ function createPointTemplate(eventPoint) {
 }
 
 export default class Point {
-  constructor({point}) {
-    this.point = point;
+  #element = null;
+  #point = null;
+
+  constructor(point) {
+    this.#point = point;
   }
 
-  getTemplate() {
-    return createPointTemplate(this.point);
+  get template() {
+    return createPointTemplate(this.#point);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }

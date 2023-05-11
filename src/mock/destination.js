@@ -7,7 +7,7 @@ const destinations = [];
 
 const getRandomDestination = () => {
   let id = getRandomId();
-  while (destinationsId.indexOf(id) >= 0) {
+  while (destinationsId.includes(id)) {
     id = getRandomId();
   }
   destinationsId.push(id);

@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { getOfferName, getOfferPrice } from './mock/data.js';
 
 const EVENT_DATE_FORMAT = 'MMM D';
 const TIME_FORMAT = 'H:mm';
@@ -19,4 +20,19 @@ const convertToTime = (date) => dayjs(date).format(TIME_FORMAT);
 const convertToUpperCase = (type) => type.charAt(0).toUpperCase() + type.slice(1);
 const convertToFormDate = (date) => dayjs(date).format(FORM_DATE_FORMAT);
 
-export {getRandomArrayElement, getRandomPrice, getRandomId, getRandomPicture, convertToEventDateTime, convertToEventDate, convertToDateTime, convertToTime, convertToUpperCase, convertToFormDate};
+function createOffersTemplate(offers) {
+  return offers.map((offer) => `
+    <div class="event__offer-selector">
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer}" type="checkbox" name="event-offer-luggage" checked>
+      <label class="event__offer-label" for="event-offer-${offer}">
+        <span class="event__offer-title">${getOfferName(offer)}</span>
+        &plus;&euro;&nbsp;
+        <span class="event__offer-price">${getOfferPrice(offer)}</span>
+      </label>
+    </div>
+  `).join('');
+}
+
+const isEscapeKey = (evt) => evt.key === 'Escape';
+
+export {isEscapeKey, createOffersTemplate, getRandomArrayElement, getRandomPrice, getRandomId, getRandomPicture, convertToEventDateTime, convertToEventDate, convertToDateTime, convertToTime, convertToUpperCase, convertToFormDate};
