@@ -28,14 +28,6 @@ export default class BoardPresenter {
   #renderPoint = (point) => {
     const pointComponent = new Point(point);
     const pointEditComponent = new EditingFormView(point);
-    
-    const closeFormOnEscape = (evt) => {
-      if(isEscapeKey(evt)) {
-        evt.preventDefault();
-        replaceFormToPoint();
-        document.body.removeEventListener('keydown', closeFormOnEscape());
-      }
-    };
 
     const replaceFormToPoint = () => {
       this.#pointListComponent.element.replaceChild(pointComponent.element, pointEditComponent.element);
@@ -43,6 +35,14 @@ export default class BoardPresenter {
 
     const replacePointToForm = () => {
       this.#pointListComponent.element.replaceChild(pointEditComponent.element, pointComponent.element);
+    };
+
+    const closeFormOnEscape = (evt) => {
+      if(isEscapeKey(evt)) {
+        evt.preventDefault();
+        replaceFormToPoint();
+        document.body.removeEventListener('keydown', closeFormOnEscape());
+      }
     };
 
     pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', (evt) => {

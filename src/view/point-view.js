@@ -54,8 +54,8 @@ function createPointTemplate(point) {
 }
 
 export default class Point {
-#element = null; 
-#point = null;
+  #element = null;
+  #point = null;
 
   constructor(point) {
     this.#point = point;
