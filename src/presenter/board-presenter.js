@@ -28,41 +28,41 @@ export default class BoardPresenter {
   #renderPoint = (point) => {
     const pointComponent = new Point(point);
     const pointEditComponent = new EditingFormView(point);
-
+    
     const closeFormOnEscape = (evt) => {
       if(isEscapeKey(evt)) {
-        console.log('escape');
         evt.preventDefault();
         replaceFormToPoint();
+        document.body.removeEventListener('keydown', closeFormOnEscape());
       }
-    };
-
-    const replacePointToForm = () => {
-      this.#pointListComponent.element.replaceChild(pointEditComponent.element, pointComponent.element);
-      document.body.addEventListener('keydown', closeFormOnEscape());
     };
 
     const replaceFormToPoint = () => {
       this.#pointListComponent.element.replaceChild(pointComponent.element, pointEditComponent.element);
-      document.body.removeEventListener('keydown', closeFormOnEscape());
+    };
+
+    const replacePointToForm = () => {
+      this.#pointListComponent.element.replaceChild(pointEditComponent.element, pointComponent.element);
     };
 
     pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', (evt) => {
       evt.preventDefault();
       replacePointToForm();
-      
+      document.body.addEventListener('keydown', closeFormOnEscape());
     });
 
     pointEditComponent.element.querySelector('.event__save-btn').addEventListener('click', (evt) => {
       evt.preventDefault();
       replaceFormToPoint();
+      document.body.removeEventListener('keydown', closeFormOnEscape());
     });
 
     pointEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', (evt) => {
       evt.preventDefault();
       replaceFormToPoint();
+      document.body.removeEventListener('keydown', closeFormOnEscape());
     });
 
     render(pointComponent, this.#pointListComponent.element);
-  }
+  };
 }
