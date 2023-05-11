@@ -1,24 +1,9 @@
-import {createElement} from '../render';
+import { createElement } from '../render';
 import { getCityDescriptionById, getCityPictureById, getCityNameById } from '../mock/destination';
-import { getRandomPoint } from '../mock/point';
 import { convertToFormDate } from '../util';
-import { getOfferName, getOfferPrice } from '../mock/data';
+import { createOffersTemplate } from '../util';
 
-function createOffersTemplate(offers) {
-  return offers.map((offer) => `
-    <div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked>
-      <label class="event__offer-label" for="event-offer-luggage-1">
-        <span class="event__offer-title">${getOfferName(offer)}</span>
-        &plus;&euro;&nbsp;
-        <span class="event__offer-price">${getOfferPrice(offer)}</span>
-      </label>
-    </div>
-  `).join('');
-}
-
-function createCreationFormTemplate(){
-  const point = getRandomPoint();
+function createCreationFormTemplate(point){
   const {dateFrom, destination, offers, type} = point;
   const date = convertToFormDate(dateFrom);
   const offersTemplate = createOffersTemplate(offers);
@@ -141,18 +126,25 @@ function createCreationFormTemplate(){
 }
 
 export default class CreationForm {
-  getTemplate() {
-    return createCreationFormTemplate();
+  #element = null;
+  #point = null;
+
+  constructor(point) {
+    this.#point = point;
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get template() {
+    return createCreationFormTemplate(this.#point);
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }

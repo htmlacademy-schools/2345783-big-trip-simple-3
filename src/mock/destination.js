@@ -7,9 +7,12 @@ const destinations = [];
 
 const getRandomDestination = () => {
   let id = getRandomId();
-  while (destinationsId.indexOf(id) >= 0) {
+  while (destinationsId.includes(id)) {
     id = getRandomId();
   }
+  //while (destinationsId.indexOf(id) >= 0) {
+    //id = getRandomId();
+  //}
   destinationsId.push(id);
   const description = getRandomArrayElement(descriptionPhrases);
   const name = getRandomArrayElement(namesOfPlaces);
