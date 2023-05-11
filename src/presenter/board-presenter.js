@@ -1,4 +1,3 @@
-import CreationFormView from '../view/creation-form-view';
 import EditingFormView from '../view/editing-form-view';
 import SortingView from '../view/sorting-view';
 import Point from '../view/point-view';
@@ -22,7 +21,7 @@ export default class BoardPresenter {
     render(new SortingView(), this.#boardContainer);
     render(this.#pointListComponent, this.#boardContainer);
     for (let i = 0; i < this.#points.length; i++) {
-      this.#renderPoint(this.#points[i])
+      this.#renderPoint(this.#points[i]);
     }
   }
 
@@ -30,13 +29,21 @@ export default class BoardPresenter {
     const pointComponent = new Point(point);
     const pointEditComponent = new EditingFormView(point);
 
+    const closeFormOnEscape = (evt) => {
+      if(isEscapeKey(evt)) {
+        console.log('escape');
+        evt.preventDefault();
+        replaceFormToPoint();
+      }
+    };
+
     const replacePointToForm = () => {
-      this.#pointListComponent.element.replaceChild(pointEditComponent.element, pointComponent.element)
+      this.#pointListComponent.element.replaceChild(pointEditComponent.element, pointComponent.element);
       document.body.addEventListener('keydown', closeFormOnEscape());
     };
 
     const replaceFormToPoint = () => {
-      this.#pointListComponent.element.replaceChild(pointComponent.element, pointEditComponent.element)
+      this.#pointListComponent.element.replaceChild(pointComponent.element, pointEditComponent.element);
       document.body.removeEventListener('keydown', closeFormOnEscape());
     };
 
@@ -55,15 +62,6 @@ export default class BoardPresenter {
       evt.preventDefault();
       replaceFormToPoint();
     });
-
-    const closeFormOnEscape = (evt) => {
-      console.log(evt);
-      if(isEscapeKey(evt)) {
-        console.log('escape');
-        evt.preventDefault();
-        replaceFormToPoint();
-      }
-    }
 
     render(pointComponent, this.#pointListComponent.element);
   }
