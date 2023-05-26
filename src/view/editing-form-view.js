@@ -1,7 +1,7 @@
-import { createElement } from '../render';
 import { getCityDescriptionById, getCityNameById } from '../mock/destination';
 import { convertToFormDate } from '../util';
 import { createOffersTemplate } from '../util';
+import AbstractView from '../framework/view/abstract-view.js';
 
 function createEditingFormTemplate(point) {
   const {dateFrom, destination, offers, type} = point;
@@ -122,26 +122,26 @@ function createEditingFormTemplate(point) {
   );
 }
 
-export default class EditingForm {
-  #element = null;
+export default class EditingForm extends AbstractView{
   #point = null;
+  #handleFormSubmit = null;
 
-  constructor(point) {
+  constructor({point, onFormSubmit}) {
+    super();
     this.#point = point;
+
+    this.#handleFormSubmit = onFormSubmit;
+
+    this.element.addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#formSubmitHandler);
   }
 
   get template() {
     return createEditingFormTemplate(this.#point);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
 }
