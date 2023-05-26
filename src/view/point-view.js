@@ -1,7 +1,7 @@
-import {createElement} from '../render';
 import { convertToEventDateTime, convertToEventDate, convertToDateTime, convertToTime } from '../util';
 import { getCityNameById } from '../mock/destination';
 import { getOfferName, getOfferPrice } from '../mock/data';
+import AbstractView from '../framework/view/abstract-view';
 
 function createOffersTemplate(offers) {
   return offers.map((offer) => `
@@ -53,26 +53,23 @@ function createPointTemplate(point) {
   );
 }
 
-export default class Point {
-  #element = null;
+export default class Point extends AbstractView {
   #point = null;
+  #handleEditClick = null;
 
-  constructor(point) {
+  constructor({point, onEditClick}) {
+    super();
     this.#point = point;
+    this.#handleEditClick = onEditClick;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
   }
 
   get template() {
     return createPointTemplate(this.#point);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
+  #editClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleEditClick();
+  };
 }

@@ -1,4 +1,4 @@
-import {createElement} from '../render';
+import AbstractView from '../framework/view/abstract-view';
 
 function createPointListTemplate() {
   return (
@@ -6,21 +6,8 @@ function createPointListTemplate() {
   );
 }
 
-export default class PointList {
-  #element = null;
-
+export default class PointList extends AbstractView {
   get template() {
     return createPointListTemplate();
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

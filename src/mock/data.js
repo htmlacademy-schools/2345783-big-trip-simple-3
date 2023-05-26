@@ -1,4 +1,5 @@
 const pointType = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
+// fix!!!!!
 const offers = [
   {
     id: 1,

@@ -1,4 +1,4 @@
-import {render} from './render';
+import {render} from './framework/render.js';
 import Filters from './view/filters-view';
 import BoardPresenter from './presenter/board-presenter';
 import PointModel from './model/point-model';
