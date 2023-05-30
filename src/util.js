@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import { getOfferName, getOfferPrice } from './mock/data.js';
+import { FilterType } from './const.js';
 
 const EVENT_DATE_FORMAT = 'MMM D';
 const TIME_FORMAT = 'H:mm';
@@ -35,4 +36,11 @@ function createOffersTemplate(offers) {
 
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
-export {isEscapeKey, createOffersTemplate, getRandomArrayElement, getRandomPrice, getRandomId, getRandomPicture, convertToEventDateTime, convertToEventDate, convertToDateTime, convertToTime, convertToUpperCase, convertToFormDate};
+const isDateToToday = (point) => dayjs(point.dateFrom).isBefore(dayjs(), 'D') || dayjs(point.dateFrom).isSame(dayjs(), 'D');
+
+const filter = {
+  [FilterType.FUTURE]: (tripPoints) => tripPoints.filter((tripPoint) => isDateToToday(tripPoint.dateFrom)),
+  [FilterType.EVERYTHING]: (tripPoints) => tripPoints,
+};
+
+export {filter, isEscapeKey, createOffersTemplate, getRandomArrayElement, getRandomPrice, getRandomId, getRandomPicture, convertToEventDateTime, convertToEventDate, convertToDateTime, convertToTime, convertToUpperCase, convertToFormDate};
