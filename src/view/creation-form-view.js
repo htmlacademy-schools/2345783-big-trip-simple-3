@@ -4,7 +4,7 @@ import { createOffersTemplate } from '../util';
 import AbstractView from '../framework/view/abstract-view.js';
 
 function createCreationFormTemplate(point){
-  const {dateFrom, destination, offers, type} = point.tripPoint;
+  const {dateFrom, destination, offers, type} = point;
   const date = convertToFormDate(dateFrom);
   const offersTemplate = createOffersTemplate(offers);
   const visibility = offers.length === 0 ? 'visually-hidden' : '';
