@@ -3,4 +3,12 @@ const FilterType = {
   EVERYTHING: 'everything'
 };
 
-export {FilterType};
+const SortType = {
+  DAY: {text: 'day'},
+  EVENT: {text: 'event'},
+  TIME: {text: 'time'},
+  PRICE: {text: 'price'},
+  OFFERS: {text: 'offer'}
+};
+
+export {FilterType, SortType};
