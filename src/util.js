@@ -5,13 +5,11 @@ import { FilterType } from './const.js';
 const EVENT_DATE_FORMAT = 'MMM D';
 const TIME_FORMAT = 'H:mm';
 const FORM_DATE_FORMAT = 'DD/MM/YY';
+const BASIC_DATE_FORMAT = 'DD/MM/YY HH:mm';
 
 const getRandomArrayElement = (items) => items[Math.floor(Math.random() * items.length)];
-
 const getRandomPrice = () => Math.floor(Math.random() * 1000) + 100;
-
 const getRandomId = () => Math.floor(Math.random() * 100) + 1;
-
 const getRandomPicture = () => `http://picsum.photos/248/152?r=${getRandomId()}`;
 
 const convertToEventDateTime = (date) => date.substring(0, date.indexOf('T'));
@@ -20,9 +18,11 @@ const convertToDateTime = (date) => date.substring(0, date.indexOf('.'));
 const convertToTime = (date) => dayjs(date).format(TIME_FORMAT);
 const convertToUpperCase = (type) => type.charAt(0).toUpperCase() + type.slice(1);
 const convertToFormDate = (date) => dayjs(date).format(FORM_DATE_FORMAT);
+const convertToBasicFormat = (date) => dayjs(date).format(BASIC_DATE_FORMAT);
 
-function createOffersTemplate(offers) {
-  return offers.map((offer) => `
+
+function createOffersTemplate(offersId) {
+  return offersId.map((offer) => `
     <div class="event__offer-selector">
       <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer}" type="checkbox" name="event-offer-${offer}" checked>
       <label class="event__offer-label" for="event-offer-${offer}">
@@ -40,17 +40,15 @@ const isDateToToday = (point) => dayjs(point.dateFrom).isBefore(dayjs(), 'D') ||
 
 const filter = {
   [FilterType.FUTURE]: (tripPoints) => tripPoints.filter((tripPoint) => isDateToToday(tripPoint.dateFrom)),
-  [FilterType.EVERYTHING]: (tripPoints) => tripPoints,
+  [FilterType.EVERYTHING]: (tripPoints) => tripPoints
 };
 
 function sortByDay(pointA, pointB) {
   return dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom));
 }
 
-function sortByTime(pointA, pointB) {
-  const timeA = dayjs(pointA.dateTo).diff(dayjs(pointA.dateFrom));
-  const timeB = dayjs(pointB.dateTo).diff(dayjs(pointB.dateFrom));
-  return timeB - timeA;
+function sortByPrice(pointA, pointB) {
+  return pointB.basePrice - pointA.basePrice;
 }
 
-export {sortByDay, sortByTime, filter, isEscapeKey, createOffersTemplate, getRandomArrayElement, getRandomPrice, getRandomId, getRandomPicture, convertToEventDateTime, convertToEventDate, convertToDateTime, convertToTime, convertToUpperCase, convertToFormDate};
+export {convertToBasicFormat, sortByDay, sortByPrice, filter, isEscapeKey, createOffersTemplate, getRandomArrayElement, getRandomPrice, getRandomId, getRandomPicture, convertToEventDateTime, convertToEventDate, convertToDateTime, convertToTime, convertToUpperCase, convertToFormDate};

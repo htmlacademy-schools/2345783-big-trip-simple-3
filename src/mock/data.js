@@ -1,5 +1,4 @@
-const pointType = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
-// fix!!!!!
+const pointTypes = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 const offers = [
   {
     id: 1,
@@ -56,46 +55,54 @@ const offers = [
 const getOfferName = (offerId) => offers.find((offer) => offer.id === offerId).title;
 const getOfferPrice = (offerId) => offers.find((offer) => offer.id === offerId).price;
 
-const taxiOffers = [4, 9];
+const offersByType = [
+  {
+    type: 'taxi',
+    offers: [offers[3], offers[8]]
+  },
 
-const busOffers = [1, 3, 8];
+  {
+    type: 'bus',
+    offers: [offers[0], offers[2], offers[7]]
+  },
 
-const trainOffers = [1, 3, 4, 5, 8];
+  {
+    type: 'train',
+    offers: [offers[0], offers[2], offers[3], offers[4], offers[7]]
+  },
 
-const shipOffers = [1, 3, 4, 5, 8];
+  {
+    type: 'ship',
+    offers: [offers[0], offers[2], offers[3], offers[4], offers[7]]
+  },
 
-const driveOffers = [9, 10];
+  {
+    type: 'drive',
+    offers: [offers[8], offers[9]]
+  },
 
-const flightOffers = [1, 2, 3, 4, 5, 8];
+  {
+    type: 'flight',
+    offers: [offers[0], offers[1], offers[2], offers[3], offers[4], offers[7]]
+  },
 
-const checkInOffers = [7];
+  {
+    type: 'check-in',
+    offers: [offers[6]]
+  },
 
-const sightseeingOffers = [6, 8];
+  {
+    type: 'sightseeing',
+    offers: [offers[5], offers[7]]
+  },
 
-const restaurantOffers = [3, 9];
+  {
+    type: 'restaurant',
+    offers: [offers[2], offers[8]]
+  },
+];
 
-const getArrayFromType = (type) => {
-  switch (type) {
-    case 'taxi':
-      return taxiOffers;
-    case 'bus':
-      return busOffers;
-    case 'train':
-      return trainOffers;
-    case 'ship':
-      return shipOffers;
-    case 'drive':
-      return driveOffers;
-    case 'flight':
-      return flightOffers;
-    case 'check-in':
-      return checkInOffers;
-    case 'sightseeing':
-      return sightseeingOffers;
-    case 'restaurant':
-      return restaurantOffers;
-  }
-};
+const getArrayFromType = (type) => offersByType.find((offer) => offer.type === type).offers.map((off) => off.id);
 
 const descriptionPhrases = [
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 'Cras aliquet varius magna, non porta ligula feugiat eget.',
@@ -151,4 +158,4 @@ const fromToDates = [
   }
 ];
 
-export {pointType, offers, getArrayFromType, descriptionPhrases, namesOfPlaces, fromToDates, getOfferName, getOfferPrice};
+export {pointTypes, offers, getArrayFromType, descriptionPhrases, namesOfPlaces, fromToDates, getOfferName, getOfferPrice, offersByType};

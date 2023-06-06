@@ -1,5 +1,5 @@
 import {getRandomArrayElement, getRandomId, getRandomPrice} from '../util';
-import {fromToDates, getArrayFromType, pointType } from './data';
+import {fromToDates, getArrayFromType, pointTypes } from './data';
 import { getRandomDestination } from './destination';
 
 const pointsId = [];
@@ -15,7 +15,7 @@ const getRandomPoint = () => {
   const dateFrom = dates.dateFrom;
   const dateTo = dates.dateTo;
   const destination = getRandomDestination();
-  const type = getRandomArrayElement(pointType);
+  const type = getRandomArrayElement(pointTypes);
   const offers = getArrayFromType(type);
 
   return {

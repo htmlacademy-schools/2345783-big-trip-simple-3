@@ -22,6 +22,7 @@ const getRandomDestination = () => {
 };
 
 const getCityNameById = (id) => destinations.find((destination) => destination.id === id).name;
+const getIdByCityName = (name) => destinations.find((destination) => destination.name === name).id;
 const getCityDescriptionById = (id) => destinations.find((destination) => destination.id === id).description;
 const getCityPictureById = (id) => destinations.find((destination) => destination.id === id).pictures.src;
-export {getRandomDestination, getCityNameById, getCityDescriptionById, getCityPictureById};
+export {getRandomDestination, getCityNameById, getCityDescriptionById, getCityPictureById, getIdByCityName};
