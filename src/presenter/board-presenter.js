@@ -1,16 +1,18 @@
 import PointListView from '../view/point-list-view';
 import PointPresenter from './point-presenter';
 import Sorting from '../view/sorting-view';
-// import CreationFormView from '../view/creation-form-view';
+import NoPointsView from '../view/no-points-view';
+import CreationFormView from '../view/creation-form-view';
 import {render, RenderPosition} from '../framework/render.js';
 import { SortType } from '../const';
-import { sortByDay, sortByTime } from '../util';
+import { sortByDay, sortByPrice } from '../util';
 
 export default class BoardPresenter {
   #pointsListComponent = new PointListView();
   #boardContainer = null;
   #points = null;
   #pointsModel = null;
+  #creationFormComponent = null;
   #noPointComponent = null;
   #sortComponent = null;
   #pointPresenter = new Map();
@@ -37,8 +39,8 @@ export default class BoardPresenter {
       case 'sort-day':
         this.#points.sort(sortByDay);
         break;
-      case 'sort-time':
-        this.#points.sort(sortByTime);
+      case 'sort-price':
+        this.#points.sort(sortByPrice);
         break;
       default:
         this.#points = [...this.#sourcedPoints];
@@ -67,14 +69,16 @@ export default class BoardPresenter {
 
   #renderBoard() {
     if (this.#points.length === 0) {
-      render(this.#renderNoPoints, this.#boardContainer);
+      this.#renderNoPoints();
       return;
     }
     this.#renderSort();
     this.#renderPointsList();
+    //this.#renderCreationForm();
   }
 
   #renderNoPoints() {
+    this.#noPointComponent = new NoPointsView();
     render(this.#noPointComponent, this.#boardContainer, RenderPosition.AFTERBEGIN );
   }
 
@@ -95,6 +99,11 @@ export default class BoardPresenter {
 
   #renderPoints() {
     this.#points.forEach((point) => this.#renderPoint(point));
+  }
+
+  #renderCreationForm() {
+    this.#creationFormComponent = new CreationFormView(this.#points[0]);
+    render(this.#creationFormComponent, this.#boardContainer, RenderPosition.AFTERBEGIN);
   }
 
 
