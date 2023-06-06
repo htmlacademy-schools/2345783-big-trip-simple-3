@@ -2,10 +2,17 @@ import { destinations, getCityNameById } from '../mock/destination';
 import { pointTypes, offersByType } from '../mock/data';
 import { createOffersTemplate, convertToBasicFormat } from '../util';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 
 const BLANK_POINT = {
   basePrice: 800,
   type: 'flight',
+  dateFrom: '2019-07-18T20:20:13.375Z',
+  dateTo: '2019-07-18T21:40:13.375Z',
+  destination: undefined,
+  id: 0,
+  offersIDs: [1, 2, 3, 4, 5, 8]
 };
 
 function createDestinationPicturesTemplate(destination) {
@@ -30,7 +37,7 @@ function createEventDetailsTemplate(point, destination) {
   <section class="event__section  event__section--offers ${(currentTypeOffers.length === 0) ? 'visually-hidden' : ''}" >
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
     <div class="event__available-offers">
-      ${createOffersTemplate(currentTypeOffers)}
+      ${createOffersTemplate(point.currentTypeOffers.map((offer) => offer.id), point.offers, point.id)}
     </div>
   </section>
   <section class="event__section  event__section--destination">
@@ -118,15 +125,32 @@ function createEditingFormTemplate(point, isEditForm) {
 
 export default class EditingForm extends AbstractStatefulView{
   #isEditForm = null;
-  #handleFormSubmit = null;
+  #fromDatepicker = null;
+  #toDatepicker = null;
 
-  constructor({point = BLANK_POINT, onFormSubmit, isEditForm = true}) {
+  constructor({point = BLANK_POINT, onFormSubmit, onRollUpButton, isEditForm = true}) {
     super();
     this._setState(EditingForm.parsePointToState(point));
     this.#isEditForm = isEditForm;
-    this.#handleFormSubmit = onFormSubmit;
+    this._callback.onFormSubmit = onFormSubmit;
+    this._callback.onRollUpButton = onRollUpButton;
 
     this._restoreHandlers();
+  }
+
+  removeElement() {
+    super.removeElement();
+
+
+    if (this.#fromDatepicker) {
+      this.#fromDatepicker.destroy();
+      this.#fromDatepicker = null;
+    }
+
+    if (this.#toDatepicker) {
+      this.#toDatepicker.destroy();
+      this.#toDatepicker = null;
+    }
   }
 
   get template() {
@@ -148,15 +172,63 @@ export default class EditingForm extends AbstractStatefulView{
       .addEventListener('input', this.#priceInputHandler);
     this.element.querySelector('.event--edit')
       .addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('.event__available-offers')
+      .addEventListener('change', this.#offersHandler);
     if (this.#isEditForm) {
       this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#formSubmitHandler);
+      this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollUpButtonHandler);
+      this.#setFromDatePicker();
+      this.#setToDatePicker();
     }
+  }
+
+  #fromDateChangeHandler = ([userDate]) => {
+    this.updateElement({
+      dateFrom: userDate.toISOString(),
+    });
+    this.#toDatepicker.set('minDate', userDate);
+  };
+
+
+  #toDateChangeHandler = ([userDate]) => {
+    this.updateElement({
+      dateTo: userDate.toISOString(),
+    });
+  };
+
+  #setFromDatePicker() {
+    this.#fromDatepicker = flatpickr(
+      this.element.querySelector(`#event-start-time-${this._state.id}`),
+      {
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        defaultDate: convertToBasicFormat(this._state.dateFrom),
+        onChange: this.#fromDateChangeHandler,
+      },
+    );
+  }
+
+  #setToDatePicker() {
+    this.#toDatepicker = flatpickr(
+      this.element.querySelector(`#event-end-time-${this._state.id}`),
+      {
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        defaultDate: convertToBasicFormat(this._state.dateTo),
+        minDate: convertToBasicFormat(this._state.dateFrom),
+        onChange: this.#toDateChangeHandler,
+      },
+    );
   }
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    //this._callback.onFormSubmit();
-    this.#handleFormSubmit(EditingForm.parseStateToPoint(this._state));
+    this._callback.onFormSubmit(EditingForm.parseStateToPoint(this._state));
+  };
+
+  #rollUpButtonHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.onRollUpButton();
   };
 
   #eventTypeHandler = (evt) => {
@@ -164,13 +236,14 @@ export default class EditingForm extends AbstractStatefulView{
     this.updateElement({
       type: evt.target.value,
       offers: offersByType.find((offer) => offer.type === evt.target.value).offers.map((offer) => offer.id),
+      currentTypeOffers: offersByType.find((offer) => offer.type === evt.target.value).offers
     });
   };
 
   #destinationHandler = (evt) => {
     evt.preventDefault();
     this.updateElement({
-      destination: destinations.find((destination) => destination.name === evt.target.value),
+      destination: destinations.find((destination) => destination.name === evt.target.value).id,
     });
   };
 
@@ -181,13 +254,31 @@ export default class EditingForm extends AbstractStatefulView{
     });
   };
 
+  #offersHandler = (evt) => {
+    evt.preventDefault();
+    const clickedOfferId = this._state.currentTypeOffers.find((offer) => offer.title.split(' ').at(-1) === evt.target.name.split('-').at(-1)).id;
+    const newOffersIds = this._state.offers;
+
+    if (newOffersIds.includes(clickedOfferId)) {
+      newOffersIds.splice(newOffersIds.indexOf(clickedOfferId), 1);
+      // clickedOfferId.map((off) => newOffersIds.splice(newOffersIds.indexOf(off), 1));
+    } else {
+      newOffersIds.push(clickedOfferId);
+    }
+    this._setState({
+      offers: newOffersIds
+    });
+  };
+
   static parsePointToState(point) {
     return {...point,
+      currentTypeOffers: offersByType.find((offer) => offer.type === point.type).offers
     };
   }
 
   static parseStateToPoint(state) {
     const point = {...state};
+    delete point.currentTypeOffers;
     return point;
   }
 }
