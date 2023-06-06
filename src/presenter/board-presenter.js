@@ -5,7 +5,7 @@ import NoPointsView from '../view/no-points-view';
 import CreationFormView from '../view/creation-form-view';
 import {render, RenderPosition} from '../framework/render.js';
 import { SortType } from '../const';
-import { sortByDay, sortByPrice } from '../util';
+import { sortByDay, sortByPrice, updateItem } from '../util';
 
 export default class BoardPresenter {
   #pointsListComponent = new PointListView();
@@ -32,6 +32,11 @@ export default class BoardPresenter {
 
   #handleModeChange = () => {
     this.#pointPresenter.forEach((presenter) => presenter.resetView());
+  };
+
+  #handlePointChange = (updatedPoint) => {
+    this.#points = updateItem(this.#points, updatedPoint);
+    this.#pointPresenter.get(updatedPoint.id).init(updatedPoint);
   };
 
   #sortPoints(sortType) {
@@ -90,7 +95,8 @@ export default class BoardPresenter {
   #renderPoint(point) {
     const pointPresenter = new PointPresenter({
       pointListContainer: this.#pointsListComponent.element,
-      onModeChange: this.#handleModeChange
+      onModeChange: this.#handleModeChange,
+      onDataChange: this.#handlePointChange
     });
 
     pointPresenter.init(point);

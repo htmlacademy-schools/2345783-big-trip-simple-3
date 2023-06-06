@@ -10,6 +10,7 @@ const Mode = {
 export default class PointPresenter {
   #pointListContainer = null;
   #handleModeChange = null;
+  #handleDataChange = null;
   #ecsKeyDownHandler = null;
 
   #pointComponent = null;
@@ -18,9 +19,10 @@ export default class PointPresenter {
   #point = null;
   #mode = Mode.DEFAULT;
 
-  constructor({pointListContainer, onModeChange}) {
+  constructor({pointListContainer, onModeChange, onDataChange}) {
     this.#pointListContainer = pointListContainer;
     this.#handleModeChange = onModeChange;
+    this.#handleDataChange = onDataChange;
   }
 
   init(point) {
@@ -37,6 +39,7 @@ export default class PointPresenter {
     this.#pointEditComponent = new EditingForm({
       point: this.#point,
       onFormSubmit: this.#handleFormSubmit,
+      onRollUpButton: this.#handleRollupButtonClick
     });
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
@@ -95,8 +98,15 @@ export default class PointPresenter {
     document.body.addEventListener('keydown', this.#ecsKeyDownHandler);
   };
 
-  #handleFormSubmit = () => {
+  #handleFormSubmit = (point) => {
+    this.#replaceFormToPoint();
+    this.#handleDataChange(point);
+    document.body.removeEventListener('keydown', this.#ecsKeyDownHandler);
+  };
+
+  #handleRollupButtonClick = () => {
     this.#pointEditComponent.reset(this.#point);
     this.#replaceFormToPoint();
+    document.body.removeEventListener('keydown', this.#ecsKeyDownHandler);
   };
 }

@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { getOfferName, getOfferPrice } from './mock/data.js';
+import { offers } from './mock/data.js';
 import { FilterType } from './const.js';
 
 const EVENT_DATE_FORMAT = 'MMM D';
@@ -21,17 +21,20 @@ const convertToFormDate = (date) => dayjs(date).format(FORM_DATE_FORMAT);
 const convertToBasicFormat = (date) => dayjs(date).format(BASIC_DATE_FORMAT);
 
 
-function createOffersTemplate(offersId) {
-  return offersId.map((offer) => `
+function createOffersTemplate(currentTypeOffers, checkedOffers, id) {
+  const offs = currentTypeOffers.map((currOffer) => offers.find((offer) => offer.id === currOffer));
+  return offs.map((offer) => {
+    const isOfferChecked = checkedOffers.includes(offer.id) ? 'checked' : '';
+    return `
     <div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer}" type="checkbox" name="event-offer-${offer}" checked>
-      <label class="event__offer-label" for="event-offer-${offer}">
-        <span class="event__offer-title">${getOfferName(offer)}</span>
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.title.split(' ').at(-1)}-${id}" type="checkbox" name="event-offer-${offer.title.split(' ').at(-1)}" ${isOfferChecked}>
+      <label class="event__offer-label" for="event-offer-${offer.title.split(' ').at(-1)}-${id}">
+        <span class="event__offer-title">${offer.title}</span>
         &plus;&euro;&nbsp;
-        <span class="event__offer-price">${getOfferPrice(offer)}</span>
+        <span class="event__offer-price">${offer.price}</span>
       </label>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 const isEscapeKey = (evt) => evt.key === 'Escape';
@@ -43,6 +46,8 @@ const filter = {
   [FilterType.EVERYTHING]: (tripPoints) => tripPoints
 };
 
+const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
+
 function sortByDay(pointA, pointB) {
   return dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom));
 }
@@ -51,4 +56,4 @@ function sortByPrice(pointA, pointB) {
   return pointB.basePrice - pointA.basePrice;
 }
 
-export {convertToBasicFormat, sortByDay, sortByPrice, filter, isEscapeKey, createOffersTemplate, getRandomArrayElement, getRandomPrice, getRandomId, getRandomPicture, convertToEventDateTime, convertToEventDate, convertToDateTime, convertToTime, convertToUpperCase, convertToFormDate};
+export {convertToBasicFormat, sortByDay, sortByPrice, filter, isEscapeKey, createOffersTemplate, getRandomArrayElement, getRandomPrice, getRandomId, getRandomPicture, convertToEventDateTime, convertToEventDate, convertToDateTime, convertToTime, convertToUpperCase, convertToFormDate, updateItem};
