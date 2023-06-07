@@ -13,10 +13,10 @@ const points = Array.from({length: POINT_COUNT}, getRandomPoint);
 const pointsModel = new PointModel(points);
 const filterModel = new FilterModel();
 const boardPresenter = new BoardPresenter({
-    boardContainer: pageContainer,
-    pointsModel,
-    filterModel,
-    onNewPointDestroy: handleNewPointFormClose});
+  boardContainer: pageContainer,
+  pointsModel,
+  filterModel,
+  onNewPointDestroy: handleNewPointFormClose});
 
 const filterPresenter = new FilterPresenter({
   filterContainer: pageHeader,

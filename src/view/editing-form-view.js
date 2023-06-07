@@ -70,7 +70,6 @@ function createDestinationList(dest) {
 }
 
 function createEditingFormTemplate(point, isEditForm) {
-  console.log(point.destination);
   const dest = destinations.find((destination) => destination.name === getCityNameById(point.destination));
   return (
     `<li class="trip-events__item">
