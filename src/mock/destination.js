@@ -1,14 +1,14 @@
 import { descriptionPhrases, namesOfPlaces } from './data';
-import { getRandomId, getRandomArrayElement } from '../util';
+import { getRandomArrayElement } from '../util';
 import { createPictures } from './picture';
 
 const destinationsId = [];
 export const destinations = [];
 
 const getRandomDestination = () => {
-  let id = getRandomId();
+  let id = 0;
   while (destinationsId.includes(id)) {
-    id = getRandomId();
+    id += 1;
   }
   destinationsId.push(id);
   const description = getRandomArrayElement(descriptionPhrases);
