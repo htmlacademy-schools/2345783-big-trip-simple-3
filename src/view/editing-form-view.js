@@ -1,6 +1,6 @@
-import { destinations, getCityNameById, getRandomDestination } from '../mock/destination';
-import { pointTypes, offersByType } from '../mock/data';
-import { createOffersTemplate, convertToBasicFormat } from '../util';
+import { getRandomDestination } from '../mock/destination';
+import { pointTypes } from '../mock/data';
+import { convertToBasicFormat } from '../util';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
@@ -15,11 +15,28 @@ const BLANK_POINT = {
   offers: [1, 2, 3, 4, 5, 8]
 };
 
+function createOffersTemplate(offers, currentTypeOffers, checkedOffers, id) {
+  const offs = currentTypeOffers.map((currOffer) => offers.find((offer) => offer.id === currOffer));
+  return offs.map((offer) => {
+    const isOfferChecked = checkedOffers.includes(offer.id) ? 'checked' : '';
+    return `
+    <div class="event__offer-selector">
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.id}-${id}" type="checkbox" name="event-offer-${offer.id}" ${isOfferChecked}>
+      <label class="event__offer-label" for="event-offer-${offer.id}-${id}">
+        <span class="event__offer-title">${offer.title}</span>
+        &plus;&euro;&nbsp;
+        <span class="event__offer-price">${offer.price}</span>
+      </label>
+    </div>`;
+  }).join('');
+}
+
 function createDestinationPicturesTemplate(destination) {
-  const pic = destination.pictures;
-  return `
-  <img class="event__photo" src="${pic.src}" alt="${pic.description}">
-  `;
+  return destination.pictures
+    .map((pic) => `
+    <img class="event__photo" src="${pic.src}" alt="${pic.description}">
+    `)
+    .join('');
 }
 
 function createDestinationDescriptionTemplate(destination) {
@@ -31,13 +48,13 @@ function createDestinationDescriptionTemplate(destination) {
   </div>` : '';
 }
 
-function createEventDetailsTemplate(point, destination) {
-  const currentTypeOffers = point.offers;
+function createEventDetailsTemplate(point, destination, offers) {
+  const currentTypeOffers = point.offersIDs;
   return `
   <section class="event__section  event__section--offers ${(currentTypeOffers.length === 0) ? 'visually-hidden' : ''}" >
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
     <div class="event__available-offers">
-      ${createOffersTemplate(point.currentTypeOffers.map((offer) => offer.id), point.offers, point.id)}
+      ${createOffersTemplate(offers.find((offer) => offer.type === point.type).offers, point.currentTypeOffers.map((offer) => offer.id), currentTypeOffers, point.id)}
     </div>
   </section>
   <section class="event__section  event__section--destination">
@@ -69,8 +86,9 @@ function createDestinationList(dest) {
   ).join('');
 }
 
-function createEditingFormTemplate(point, isEditForm) {
-  const dest = destinations.find((destination) => destination.name === getCityNameById(point.destination));
+function createEditingFormTemplate(point, offers, destinations, isEditForm) {
+  const destName = destinations.find((destination) => destination.id === point.destination).name;
+  const dest = destinations.find((destination) => destination.name === destName);
   return (
     `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
@@ -116,7 +134,7 @@ function createEditingFormTemplate(point, isEditForm) {
       ${generateRollupButton(isEditForm)}
     </header>
     <section class="event__details">
-      ${createEventDetailsTemplate(point, dest)}
+      ${createEventDetailsTemplate(point, dest, offers)}
       </section>
   </form>
   </li>`
@@ -125,15 +143,19 @@ function createEditingFormTemplate(point, isEditForm) {
 
 export default class EditingForm extends AbstractStatefulView{
   #isEditForm = null;
+  #offers = null;
+  #destinations = null;
   #fromDatepicker = null;
   #toDatepicker = null;
   #handleFormSubmit = null;
   #handleRollupButton = null;
   #handleDeleteClick = null;
 
-  constructor({point = BLANK_POINT, onFormSubmit, onRollUpButton, onDeleteClick, isEditForm = true}) {
+  constructor({point = BLANK_POINT, offers, destinations, onFormSubmit, onRollUpButton, onDeleteClick, isEditForm = true}) {
     super();
-    this._setState(EditingForm.parsePointToState(point));
+    this._setState(EditingForm.parsePointToState(point, offers));
+    this.#offers = offers;
+    this.#destinations = destinations;
     this.#isEditForm = isEditForm;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleRollupButton = onRollUpButton;
@@ -158,12 +180,12 @@ export default class EditingForm extends AbstractStatefulView{
   }
 
   get template() {
-    return createEditingFormTemplate(this._state, this.#isEditForm);
+    return createEditingFormTemplate(this._state, this.#offers, this.#destinations, this.#isEditForm);
   }
 
   reset(point) {
     this.updateElement(
-      EditingForm.parsePointToState(point),
+      EditingForm.parsePointToState(point, this.#offers),
     );
   }
 
@@ -245,15 +267,15 @@ export default class EditingForm extends AbstractStatefulView{
     evt.preventDefault();
     this.updateElement({
       type: evt.target.value,
-      offers: offersByType.find((offer) => offer.type === evt.target.value).offers.map((offer) => offer.id),
-      currentTypeOffers: offersByType.find((offer) => offer.type === evt.target.value).offers
+      offers: this.#offers.find((offer) => offer.type === evt.target.value).offers.map((offer) => offer.id),
+      currentTypeOffers: this.#offers.find((offer) => offer.type === evt.target.value).offers
     });
   };
 
   #destinationHandler = (evt) => {
     evt.preventDefault();
     this.updateElement({
-      destination: destinations.find((destination) => destination.name === evt.target.value).id,
+      destination: this.#destinations.find((destination) => destination.name === evt.target.value).id,
     });
   };
 
@@ -266,23 +288,21 @@ export default class EditingForm extends AbstractStatefulView{
 
   #offersHandler = (evt) => {
     evt.preventDefault();
-    const clickedOfferId = this._state.currentTypeOffers.find((offer) => offer.title.split(' ').at(-1) === evt.target.name.split('-').at(-1)).id;
-    const newOffersIds = this._state.offers;
-
+    const clickedOfferId = Number(evt.target.name.split('-').at(-1));
+    const newOffersIds = this._state.offers.slice();
     if (newOffersIds.includes(clickedOfferId)) {
       newOffersIds.splice(newOffersIds.indexOf(clickedOfferId), 1);
-      // clickedOfferId.map((off) => newOffersIds.splice(newOffersIds.indexOf(off), 1));
     } else {
       newOffersIds.push(clickedOfferId);
     }
     this._setState({
-      offers: newOffersIds
+      offersIDs: newOffersIds
     });
   };
 
-  static parsePointToState(point) {
+  static parsePointToState(point, offers) {
     return {...point,
-      currentTypeOffers: offersByType.find((offer) => offer.type === point.type).offers
+      currentTypeOffers: offers.find((offer) => offer.type === point.type).offers
     };
   }
 

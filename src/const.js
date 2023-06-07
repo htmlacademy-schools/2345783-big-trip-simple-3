@@ -21,6 +21,9 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT'
 };
 
-export {FilterType, SortType, UserAction, UpdateType};
+const pointTypes = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
+
+export {FilterType, SortType, UserAction, UpdateType, pointTypes};
