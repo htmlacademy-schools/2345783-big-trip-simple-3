@@ -1,4 +1,4 @@
-import { destinations, getCityNameById } from '../mock/destination';
+import { destinations, getCityNameById, getRandomDestination } from '../mock/destination';
 import { pointTypes, offersByType } from '../mock/data';
 import { createOffersTemplate, convertToBasicFormat } from '../util';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
@@ -10,9 +10,9 @@ const BLANK_POINT = {
   type: 'flight',
   dateFrom: '2019-07-18T20:20:13.375Z',
   dateTo: '2019-07-18T21:40:13.375Z',
-  destination: undefined,
+  destination: getRandomDestination(),
   id: 0,
-  offersIDs: [1, 2, 3, 4, 5, 8]
+  offers: [1, 2, 3, 4, 5, 8]
 };
 
 function createDestinationPicturesTemplate(destination) {
@@ -70,6 +70,7 @@ function createDestinationList(dest) {
 }
 
 function createEditingFormTemplate(point, isEditForm) {
+  console.log(point.destination);
   const dest = destinations.find((destination) => destination.name === getCityNameById(point.destination));
   return (
     `<li class="trip-events__item">
@@ -127,13 +128,17 @@ export default class EditingForm extends AbstractStatefulView{
   #isEditForm = null;
   #fromDatepicker = null;
   #toDatepicker = null;
+  #handleFormSubmit = null;
+  #handleRollupButton = null;
+  #handleDeleteClick = null;
 
-  constructor({point = BLANK_POINT, onFormSubmit, onRollUpButton, isEditForm = true}) {
+  constructor({point = BLANK_POINT, onFormSubmit, onRollUpButton, onDeleteClick, isEditForm = true}) {
     super();
     this._setState(EditingForm.parsePointToState(point));
     this.#isEditForm = isEditForm;
-    this._callback.onFormSubmit = onFormSubmit;
-    this._callback.onRollUpButton = onRollUpButton;
+    this.#handleFormSubmit = onFormSubmit;
+    this.#handleRollupButton = onRollUpButton;
+    this.#handleDeleteClick = onDeleteClick;
 
     this._restoreHandlers();
   }
@@ -175,7 +180,8 @@ export default class EditingForm extends AbstractStatefulView{
     this.element.querySelector('.event__available-offers')
       .addEventListener('change', this.#offersHandler);
     if (this.#isEditForm) {
-      this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#formSubmitHandler);
+      // this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#formSubmitHandler);
+      this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
       this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollUpButtonHandler);
       this.#setFromDatePicker();
       this.#setToDatePicker();
@@ -223,12 +229,17 @@ export default class EditingForm extends AbstractStatefulView{
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this._callback.onFormSubmit(EditingForm.parseStateToPoint(this._state));
+    this.#handleFormSubmit(EditingForm.parseStateToPoint(this._state));
+  };
+
+  #formDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleDeleteClick(EditingForm.parseStateToPoint(this._state));
   };
 
   #rollUpButtonHandler = (evt) => {
     evt.preventDefault();
-    this._callback.onRollUpButton();
+    this.#handleRollupButton();
   };
 
   #eventTypeHandler = (evt) => {

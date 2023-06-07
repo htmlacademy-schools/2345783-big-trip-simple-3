@@ -1,13 +1,13 @@
-import {getRandomArrayElement, getRandomId, getRandomPrice} from '../util';
+import {getRandomArrayElement, getRandomPrice} from '../util';
 import {fromToDates, getArrayFromType, pointTypes } from './data';
 import { getRandomDestination } from './destination';
 
 const pointsId = [];
 
 const getRandomPoint = () => {
-  let id = getRandomId();
-  while (pointsId.indexOf(id) >= 0) {
-    id = getRandomId();
+  let id = 0;
+  while (pointsId.includes(id)) {
+    id += 1;
   }
   pointsId.push(id);
   const basePrice = getRandomPrice();

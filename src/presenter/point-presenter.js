@@ -1,6 +1,7 @@
 import { render, replace, remove } from '../framework/render';
 import Point from '../view/point-view';
 import EditingForm from '../view/editing-form-view';
+import {UserAction, UpdateType} from '../const.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -39,7 +40,8 @@ export default class PointPresenter {
     this.#pointEditComponent = new EditingForm({
       point: this.#point,
       onFormSubmit: this.#handleFormSubmit,
-      onRollUpButton: this.#handleRollupButtonClick
+      onRollUpButton: this.#handleRollupButtonClick,
+      onDeleteClick: this.#handleDeleteClick
     });
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
@@ -98,9 +100,18 @@ export default class PointPresenter {
     document.body.addEventListener('keydown', this.#ecsKeyDownHandler);
   };
 
-  #handleFormSubmit = (point) => {
+  #handleFormSubmit = (update) => {
     this.#replaceFormToPoint();
-    this.#handleDataChange(point);
+    const isMinorUpdate =
+      (this.#point.dateFrom == update.dateFrom) ||
+      (this.#point.basePrice != update.basePrice);
+
+    this.#handleDataChange(
+      UserAction.UPDATE_POINT,
+      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      update,
+    );
+
     document.body.removeEventListener('keydown', this.#ecsKeyDownHandler);
   };
 
@@ -108,5 +119,13 @@ export default class PointPresenter {
     this.#pointEditComponent.reset(this.#point);
     this.#replaceFormToPoint();
     document.body.removeEventListener('keydown', this.#ecsKeyDownHandler);
+  };
+
+  #handleDeleteClick = (point) => {
+    this.#handleDataChange(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point,
+    );
   };
 }
