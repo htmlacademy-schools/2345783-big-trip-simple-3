@@ -1,4 +1,4 @@
-// task8-2
+// task8-3
 import {render} from './framework/render.js';
 import FilterModel from './model/filter-model.js';
 import PointModel from './model/point-model';
