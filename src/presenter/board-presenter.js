@@ -76,14 +76,14 @@ export default class BoardPresenter {
   createPoint() {
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this.#newPointPresenter.init();
+    this.#newPointPresenter.init(this.#pointsModel.offers, this.#pointsModel.destinations);
   }
 
   #handleViewAction = async (actionType, updateType, update) => {
     this.#uiBlocker.block();
     switch (actionType) {
       case UserAction.ADD_POINT:
-        this.#pointsPresenters.get(update.id).setSaving();
+        this.#newPointPresenter.setSaving();
         try {
           await this.#pointsModel.addPoint(updateType, update);
         } catch(err) {
@@ -119,7 +119,7 @@ export default class BoardPresenter {
   #handleModelEvent = (updateType, data) => {
     switch (updateType) {
       case UpdateType.PATCH:
-        this.#pointsPresenters.get(data.id).init(data);
+        this.#pointsPresenters.get(data.id).init(data, this.#pointsModel.offers, this.#pointsModel.destinations);
         break;
       case UpdateType.MINOR:
         this.#clearBoard();

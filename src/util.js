@@ -21,11 +21,11 @@ const convertToBasicFormat = (date) => dayjs(date).format(BASIC_DATE_FORMAT);
 
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
-const isDateToToday = (point) => dayjs(point.dateFrom).isBefore(dayjs(), 'D') || dayjs(point.dateFrom).isSame(dayjs(), 'D');
+const isDateToToday = (point) => point.dateTo && dayjs().isBefore(point.dateTo, 'D');
 
 const filter = {
-  [FilterType.FUTURE]: (tripPoints) => tripPoints.filter((tripPoint) => isDateToToday(tripPoint.dateFrom)),
-  [FilterType.EVERYTHING]: (tripPoints) => tripPoints
+  [FilterType.FUTURE]: (points) => points.filter((point) => isDateToToday(point)),
+  [FilterType.EVERYTHING]: (points) => points
 };
 
 const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);

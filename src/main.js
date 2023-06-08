@@ -4,7 +4,7 @@ import PointModel from './model/point-model';
 import FilterPresenter from './presenter/filter-presenter.js';
 import BoardPresenter from './presenter/board-presenter';
 import NewPointButton from './view/new-point-button-view.js';
-import PointApiService from './trip-point-api-service.js';
+import PointApiService from './point-api-service.js';
 
 const AUTHORIZATION = 'Basic yrmint413';
 const END_POINT = 'https://18.ecmascript.pages.academy/big-trip';
@@ -28,8 +28,8 @@ const boardPresenter = new BoardPresenter({
 
 const filterPresenter = new FilterPresenter({
   filterContainer: pageFilterElement,
-  filterModel,
-  pointsModel
+  filterModel: filterModel,
+  pointsModel: pointsModel
 });
 
 const newPointButtonComponent = new NewPointButton({

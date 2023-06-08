@@ -8,7 +8,7 @@ const Method = {
 };
 
 export default class PointApiService extends ApiService {
-  get tripPoints() {
+  get points() {
     return this._load({url: 'points'})
       .then(ApiService.parseResponse);
   }
@@ -23,11 +23,11 @@ export default class PointApiService extends ApiService {
       .then(ApiService.parseResponse);
   }
 
-  async updatePoint(tripPoint) {
+  async updatePoint(point) {
     const response = await this._load({
-      url: `points/${tripPoint.id}`,
+      url: `points/${point.id}`,
       method: Method.PUT,
-      body: JSON.stringify(this.#adaptToServer(tripPoint)),
+      body: JSON.stringify(this.#adaptToServer(point)),
       headers: new Headers({'Content-Type': 'application/json'}),
     });
 
@@ -36,11 +36,11 @@ export default class PointApiService extends ApiService {
     return parsedResponse;
   }
 
-  async addPoint(tripPoint) {
+  async addPoint(point) {
     const response = await this._load({
       url: 'points',
       method: Method.POST,
-      body: JSON.stringify(this.#adaptToServer(tripPoint)),
+      body: JSON.stringify(this.#adaptToServer(point)),
       headers: new Headers({'Content-Type': 'application/json'}),
     });
 
@@ -49,27 +49,27 @@ export default class PointApiService extends ApiService {
     return parsedResponse;
   }
 
-  async deletePoint(tripPoint) {
+  async deletePoint(point) {
     const response = await this._load({
-      url: `points/${tripPoint.id}`,
+      url: `points/${point.id}`,
       method: Method.DELETE,
     });
 
     return response;
   }
 
-  #adaptToServer(tripPoint) {
-    const adaptedTripPoint = {...tripPoint,
-      'date_from': (tripPoint.dateFrom) ? new Date(tripPoint.dateFrom).toISOString() : new Date().toISOString,
-      'date_to': (tripPoint.dateFrom) ? new Date(tripPoint.dateTo).toISOString() : new Date().toISOString,
-      'base_price': Number(tripPoint.basePrice),
-      'offers': tripPoint.offers
+  #adaptToServer(point) {
+    const adaptedTripPoint = {...point,
+      'date_from': (point.dateFrom) ? new Date(point.dateFrom).toISOString() : new Date().toISOString,
+      'date_to': (point.dateFrom) ? new Date(point.dateTo).toISOString() : new Date().toISOString,
+      'base_price': Number(point.basePrice),
+      'offers': point.offersIDs
     };
 
     delete adaptedTripPoint.dateFrom;
     delete adaptedTripPoint.dateTo;
     delete adaptedTripPoint.basePrice;
-    delete adaptedTripPoint.offers;
+    delete adaptedTripPoint.offersIDs;
     return adaptedTripPoint;
   }
 }
