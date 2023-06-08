@@ -1,5 +1,4 @@
 import dayjs from 'dayjs';
-import { offers } from './mock/data.js';
 import { FilterType } from './const.js';
 
 const EVENT_DATE_FORMAT = 'MMM D';
@@ -14,36 +13,19 @@ const getRandomPicture = () => `http://picsum.photos/248/152?r=${getRandomId()}`
 
 const convertToEventDateTime = (date) => date.substring(0, date.indexOf('T'));
 const convertToEventDate = (date) => dayjs(date).format(EVENT_DATE_FORMAT);
-const convertToDateTime = (date) => date.substring(0, date.indexOf('.'));
+const convertToDateTime = (date) => date.substring(0, date.lastIndexOf(':'));
 const convertToTime = (date) => dayjs(date).format(TIME_FORMAT);
 const convertToUpperCase = (type) => type.charAt(0).toUpperCase() + type.slice(1);
 const convertToFormDate = (date) => dayjs(date).format(FORM_DATE_FORMAT);
 const convertToBasicFormat = (date) => dayjs(date).format(BASIC_DATE_FORMAT);
 
-
-function createOffersTemplate(currentTypeOffers, checkedOffers, id) {
-  const offs = currentTypeOffers.map((currOffer) => offers.find((offer) => offer.id === currOffer));
-  return offs.map((offer) => {
-    const isOfferChecked = checkedOffers.includes(offer.id) ? 'checked' : '';
-    return `
-    <div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.title.split(' ').at(-1)}-${id}" type="checkbox" name="event-offer-${offer.title.split(' ').at(-1)}" ${isOfferChecked}>
-      <label class="event__offer-label" for="event-offer-${offer.title.split(' ').at(-1)}-${id}">
-        <span class="event__offer-title">${offer.title}</span>
-        &plus;&euro;&nbsp;
-        <span class="event__offer-price">${offer.price}</span>
-      </label>
-    </div>`;
-  }).join('');
-}
-
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
-const isDateToToday = (point) => dayjs(point.dateFrom).isBefore(dayjs(), 'D') || dayjs(point.dateFrom).isSame(dayjs(), 'D');
+const isDateToToday = (point) => point.dateTo && dayjs().isBefore(point.dateTo, 'D');
 
 const filter = {
-  [FilterType.FUTURE]: (tripPoints) => tripPoints.filter((tripPoint) => isDateToToday(tripPoint.dateFrom)),
-  [FilterType.EVERYTHING]: (tripPoints) => tripPoints
+  [FilterType.FUTURE]: (points) => points.filter((point) => isDateToToday(point)),
+  [FilterType.EVERYTHING]: (points) => points
 };
 
 const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
@@ -56,4 +38,4 @@ function sortByPrice(pointA, pointB) {
   return pointB.basePrice - pointA.basePrice;
 }
 
-export {convertToBasicFormat, sortByDay, sortByPrice, filter, isEscapeKey, createOffersTemplate, getRandomArrayElement, getRandomPrice, getRandomId, getRandomPicture, convertToEventDateTime, convertToEventDate, convertToDateTime, convertToTime, convertToUpperCase, convertToFormDate, updateItem};
+export {convertToBasicFormat, sortByDay, sortByPrice, filter, isEscapeKey, getRandomArrayElement, getRandomPrice, getRandomId, getRandomPicture, convertToEventDateTime, convertToEventDate, convertToDateTime, convertToTime, convertToUpperCase, convertToFormDate, updateItem};
