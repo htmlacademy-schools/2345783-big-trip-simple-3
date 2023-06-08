@@ -1,6 +1,11 @@
 const FilterType = {
+  EVERYTHING: 'everything',
   FUTURE: 'future',
-  EVERYTHING: 'everything'
+};
+
+const FilterTypeDescriptions = {
+  [FilterType.EVERYTHING]: 'EVERYTHING',
+  [FilterType.FUTURE]: 'FUTURE',
 };
 
 const SortType = {
@@ -21,6 +26,9 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT'
 };
 
-export {FilterType, SortType, UserAction, UpdateType};
+const pointTypes = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
+
+export {FilterType, SortType, UserAction, UpdateType, pointTypes, FilterTypeDescriptions};
