@@ -21,7 +21,7 @@ const convertToBasicFormat = (date) => dayjs(date).format(BASIC_DATE_FORMAT);
 
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
-const isDateToToday = (point) => point.dateTo && dayjs().isBefore(point.dateTo, 'D');
+const isDateToToday = (point) => point.dateFrom && dayjs().isBefore(point.dateFrom, 'D');
 
 const filter = {
   [FilterType.FUTURE]: (points) => points.filter((point) => isDateToToday(point)),
