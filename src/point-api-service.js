@@ -60,11 +60,9 @@ export default class PointApiService extends ApiService {
 
   #adaptToServer(point) {
     const adaptedTripPoint = {...point,
-
-      'id': Number(point.id),
       'date_from': (point.dateFrom) ? new Date(point.dateFrom).toISOString() : new Date().toISOString,
       'date_to': (point.dateFrom) ? new Date(point.dateTo).toISOString() : new Date().toISOString,
-      'base_price': Number(point.basePrice),
+      'base_price': point.basePrice,
       'offers': point.offersIDs
     };
 
