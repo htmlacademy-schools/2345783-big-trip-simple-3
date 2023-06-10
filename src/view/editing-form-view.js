@@ -273,6 +273,9 @@ export default class EditingForm extends AbstractStatefulView{
 
   #eventTypeHandler = (evt) => {
     evt.preventDefault();
+    this._setState({
+      offersIDs: []
+    });
     this.updateElement({
       type: evt.target.value,
       offers: this.#offers.find((offer) => offer.type === evt.target.value).offers.map((offer) => offer.id),
