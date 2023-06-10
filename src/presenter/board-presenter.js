@@ -165,6 +165,7 @@ export default class BoardPresenter {
   }
 
   #renderPointsList() {
+
     render(this.#pointListComponent, this.#boardContainer);
     this.#renderPoints();
   }

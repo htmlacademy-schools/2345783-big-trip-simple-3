@@ -92,6 +92,7 @@ export default class PointModel extends Observable {
 
   #adaptToClient(point) {
     const adaptedPoint = {...point,
+      id: Number(point['id']),
       dateFrom: point['date_from'],
       dateTo: point['date_to'],
       offersIDs: point['offers'],
